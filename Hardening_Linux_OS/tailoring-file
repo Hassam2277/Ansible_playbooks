@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xccdf:Tailoring xmlns:xccdf="http://checklists.nist.gov/xccdf/1.2" id="xccdf_scap-workbench_tailoring_default">
+  <xccdf:benchmark href="/tmp/scap-workbench-atERoP/ssg-rhel8-ds.xml"/>
+  <xccdf:version time="2023-07-05T17:41:50">1</xccdf:version>
+  <xccdf:Profile id="xccdf_org.ssgproject.content_profile_cis_server_l1_customized" extends="xccdf_org.ssgproject.content_profile_cis_server_l1">
+    <xccdf:title xmlns:xhtml="http://www.w3.org/1999/xhtml" xml:lang="en-US" override="true">CIS Red Hat Enterprise Linux 8 Benchmark for Level 1 - Server [CUSTOMIZED]</xccdf:title>
+    <xccdf:description xmlns:xhtml="http://www.w3.org/1999/xhtml" xml:lang="en-US" override="true">This profile defines a baseline that aligns to the "Level 1 - Server"
+configuration from the Center for Internet Security® Red Hat Enterprise
+Linux 8 Benchmark™, v2.0.0, released 2022-02-23.
+
+This profile includes Center for Internet Security®
+Red Hat Enterprise Linux 8 CIS Benchmarks™ content.</xccdf:description>
+    <xccdf:select idref="xccdf_org.ssgproject.content_rule_prefer_64bit_os" selected="true"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_group_rpm_verification" selected="true"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_rule_rpm_verify_permissions" selected="true"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_rule_rpm_verify_ownership" selected="true"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_rule_rpm_verify_hashes" selected="true"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_rule_configure_crypto_policy" selected="false"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_rule_partition_for_tmp" selected="false"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_group_disk_partitioning" selected="false"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_rule_dconf_db_up_to_date" selected="false"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_rule_dconf_gnome_disable_user_list" selected="false"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_rule_gnome_gdm_disable_xdmcp" selected="false"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_group_gnome_login_screen" selected="false"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_rule_dconf_gnome_disable_automount" selected="false"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_rule_dconf_gnome_disable_automount_open" selected="false"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_group_gnome_media_settings" selected="false"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_group_gnome" selected="false"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_rule_package_nss-tools_installed" selected="true"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_group_system-tools" selected="true"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_rule_package_binutils_installed" selected="true"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_rule_package_vim_installed" selected="true"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_rule_package_tar_installed" selected="true"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_rule_ensure_gpgcheck_local_packages" selected="true"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_rule_no_direct_root_logins" selected="true"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_rule_accounts_have_homedir_login_defs" selected="true"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_rule_grub2_password" selected="false"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_rule_package_logrotate_installed" selected="true"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_group_log_rotation" selected="true"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_rule_configure_firewalld_ports" selected="true"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_rule_package_iptables-services_installed" selected="true"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_rule_package_iptables_installed" selected="true"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_group_permissions_var_log_dir" selected="true"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_rule_file_permissions_var_log_syslog" selected="true"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_rule_file_permissions_var_log_messages" selected="true"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_rule_file_permissions_var_log" selected="true"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_rule_file_owner_var_log_syslog" selected="true"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_rule_file_owner_var_log_messages" selected="true"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_rule_file_owner_var_log" selected="true"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_rule_file_groupowner_var_log_syslog" selected="true"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_rule_file_groupowner_var_log_messages" selected="true"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_rule_file_groupowner_var_log" selected="true"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_rule_package_policycoreutils-python-utils_installed" selected="true"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_rule_package_policycoreutils_installed" selected="true"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_rule_service_cron_enabled" selected="true"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_rule_package_cron_installed" selected="true"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_rule_package_bind_removed" selected="false"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_group_disabling_dns_server" selected="false"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_group_dns" selected="false"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_rule_httpd_enable_error_logging" selected="true"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_group_securing_httpd" selected="true"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_group_httpd_minimal_modules_installed" selected="true"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_group_installing_httpd" selected="true"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_rule_httpd_enable_loglevel" selected="true"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_rule_httpd_enable_system_logging" selected="true"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_rule_package_ntp_installed" selected="true"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_rule_package_openssh-clients_installed" selected="true"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_rule_package_openssh-server_installed" selected="true"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_rule_service_sshd_enabled" selected="true"/>
+  </xccdf:Profile>
+</xccdf:Tailoring>

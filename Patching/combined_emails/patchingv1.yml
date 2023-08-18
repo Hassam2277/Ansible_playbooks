@@ -1,0 +1,66 @@
+---
+- name: Update Packages and Send Report
+  hosts: server
+  gather_facts: yes  # Gather facts about target hosts
+
+  tasks:
+    - name: Get current package list
+      shell: rpm -qa --qf "%{NAME},%{VERSION}\n"
+      register: current_packages
+
+    - name: Upgrade all packages excluding MONGO, HTTPD, DOCKER
+      yum:
+        name: '*'
+        exclude: mongo*,httpd*,docker*
+        state: latest
+        update_cache: yes
+        update_only: yes
+      register: yum_updates
+
+    - name: Get updated package list
+      shell: rpm -qa --qf "%{NAME},%{VERSION}\n"
+      register: updated_packages
+
+    - name: Generate CSV file of package report
+      set_fact:
+        package_report: |
+          VM IP Address,Package Name,Before Update,After Update,Updated_Version
+          {% for current, updated in current_packages.stdout_lines | zip(updated_packages.stdout_lines) %}
+          {{ ansible_host }},{{ current }},{{ updated }}
+          {% endfor %}
+      delegate_to: localhost
+
+    - name: Create CSV file
+      delegate_to: localhost
+      #run_once: true
+      copy:
+        content: "{{ package_report }}"
+        dest: "/tmp/package_report_{{ ansible_host }}.csv"
+
+
+    - name: Combine All CSV Files
+      delegate_to: localhost
+      shell: cat /tmp/*.csv > /tmp/final_report.csv
+
+- name: Send Email
+  hosts: localhost
+  tasks:
+    - name: Set combined package report
+      set_fact:
+        combined_report_content: "{{ lookup('file', '/tmp/final_report.csv') }}"
+
+
+    - name: Send Email
+      mail:
+        host: smtp.gmail.com  # Update with your SMTP server details
+        port: 587
+        username: no-reply@it22.nl 
+        password: glzpcmxvdfblrwyi
+        to: h.tahir@it22.nl
+        subject: Package Update Report
+        body: Attached is the CSV file containing the combined package update report.
+        attach:
+          - /tmp/final_report.csv
+
+
+

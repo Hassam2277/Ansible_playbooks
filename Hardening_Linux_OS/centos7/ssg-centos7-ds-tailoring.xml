@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xccdf:Tailoring xmlns:xccdf="http://checklists.nist.gov/xccdf/1.2" id="xccdf_scap-workbench_tailoring_default">
+  <xccdf:benchmark href="/usr/share/xml/scap/ssg/content/ssg-centos7-ds.xml"/>
+  <xccdf:version time="2023-07-10T07:08:17">1</xccdf:version>
+  <xccdf:Profile id="xccdf_org.ssgproject.content_profile_cis_server_l1_hsmauth" extends="xccdf_org.ssgproject.content_profile_cis_server_l1">
+    <xccdf:title xmlns:xhtml="http://www.w3.org/1999/xhtml" xml:lang="en-US" override="true">CIS Red Hat Enterprise Linux 7 Benchmark for Level 1 - Server [CUSTOMIZED]</xccdf:title>
+    <xccdf:description xmlns:xhtml="http://www.w3.org/1999/xhtml" xml:lang="en-US" override="true">This profile defines a baseline that aligns to the "Level 1 - Server"
+configuration from the Center for Internet Security® Red Hat Enterprise
+Linux 7 Benchmark™, v3.1.1, released 05-21-2021.
+
+This profile includes Center for Internet Security®
+Red Hat Enterprise Linux 7 CIS Benchmarks™ content.</xccdf:description>
+    <xccdf:select idref="xccdf_org.ssgproject.content_rule_prefer_64bit_os" selected="true"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_rule_rpm_verify_hashes" selected="true"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_group_rpm_verification" selected="true"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_rule_partition_for_tmp" selected="false"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_group_disk_partitioning" selected="false"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_rule_gnome_gdm_disable_xdmcp" selected="false"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_rule_dconf_gnome_disable_user_list" selected="false"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_group_gnome_login_screen" selected="false"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_rule_accounts_password_set_max_life_existing" selected="true"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_rule_accounts_password_set_min_life_existing" selected="true"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_group_configure_auditd_data_retention" selected="true"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_rule_auditd_write_logs" selected="true"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_rule_auditd_overflow_action" selected="true"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_rule_auditd_name_format" selected="true"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_rule_auditd_log_format" selected="true"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_rule_auditd_local_events" selected="true"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_rule_auditd_freq" selected="true"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_rule_auditd_data_retention_space_left_percentage" selected="true"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_rule_auditd_data_retention_space_left_action" selected="true"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_rule_auditd_data_retention_space_left" selected="true"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_rule_auditd_data_retention_num_logs" selected="true"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_rule_auditd_data_retention_max_log_file_action_stig" selected="true"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_rule_auditd_data_retention_max_log_file_action" selected="true"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_rule_auditd_data_retention_max_log_file" selected="true"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_rule_auditd_data_retention_flush" selected="true"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_rule_auditd_data_retention_admin_space_left_percentage" selected="true"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_rule_auditd_data_retention_admin_space_left_action" selected="true"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_rule_auditd_data_retention_action_mail_acct" selected="true"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_rule_auditd_data_disk_full_action_stig" selected="true"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_rule_auditd_data_disk_full_action" selected="true"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_rule_auditd_data_disk_error_action_stig" selected="true"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_rule_auditd_data_disk_error_action" selected="true"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_rule_auditd_audispd_syslog_plugin_activated" selected="true"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_rule_auditd_audispd_remote_daemon_type" selected="true"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_rule_auditd_audispd_remote_daemon_path" selected="true"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_rule_auditd_audispd_remote_daemon_direction" selected="true"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_rule_auditd_audispd_remote_daemon_activated" selected="true"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_rule_auditd_audispd_network_failure_action" selected="true"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_rule_auditd_audispd_encrypt_sent_records" selected="true"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_rule_auditd_audispd_disk_full_action" selected="true"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_rule_auditd_audispd_configure_remote_server" selected="true"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_group_auditing" selected="true"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_rule_audit_rules_for_ospp" selected="true"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_group_policy_rules" selected="true"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_rule_mount_option_var_tmp_nodev" selected="false"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_rule_mount_option_var_tmp_noexec" selected="false"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_rule_mount_option_var_tmp_nosuid" selected="false"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_rule_mount_option_tmp_nosuid" selected="false"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_rule_mount_option_tmp_noexec" selected="false"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_rule_mount_option_tmp_nodev" selected="false"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_rule_coreos_enable_selinux_kernel_argument" selected="true"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_group_avahi" selected="false"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_group_disable_avahi_group" selected="false"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_rule_service_avahi-daemon_disabled" selected="false"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_group_avahi_configuration" selected="false"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_rule_avahi_restrict_published_information" selected="false"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_rule_avahi_prevent_port_sharing" selected="false"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_rule_avahi_ip_only" selected="false"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_rule_avahi_disable_publishing" selected="false"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_rule_avahi_check_ttl" selected="false"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_rule_package_cron_installed" selected="true"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_rule_service_cron_enabled" selected="true"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_group_docker" selected="true"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_rule_docker_storage_configured" selected="true"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_rule_docker_selinux_enabled" selected="true"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_rule_service_docker_enabled" selected="true"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_rule_package_docker_installed" selected="true"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_rule_ftp_limit_users" selected="true"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_group_ftp_restrict_users" selected="true"/>
+    <xccdf:select idref="xccdf_org.ssgproject.content_group_ftp_configure_vsftpd" selected="true"/>
+  </xccdf:Profile>
+</xccdf:Tailoring>
