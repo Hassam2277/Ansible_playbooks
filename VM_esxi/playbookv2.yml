@@ -1,0 +1,60 @@
+###ORIGINAL
+- hosts: 192.168.18.29
+  connection: local
+  gather_facts: no
+
+  vars:
+    vcenter_hostname: 192.168.18.29
+    vcenter_username: root
+    vcenter_password: redhat@123
+    esxi_hostname: it22.local
+    ansible_python_interpreter: /usr/bin/python3
+    kickstart_file_url: "http://192.168.18.43/ks-rhel8.cfg"
+
+  tasks:
+    - name: Create a virtual machine on given ESXi hostname
+      community.vmware.vmware_guest:
+        hostname: "{{ vcenter_hostname }}"
+        username: "{{ vcenter_username }}"
+        password: "{{ vcenter_password }}"
+        validate_certs: no
+        folder: /
+        name: kickstart-VM
+        state: poweredon
+        guest_id: rhel8_64Guest
+        esxi_hostname: "{{ esxi_hostname }}"
+        disk:
+          - size_gb: 40
+            type: thick
+            datastore: datastore1
+        hardware:
+          memory_mb: 4000
+          num_cpus: 4
+          scsi: paravirtual
+        cdrom:
+          controller_number: 0
+          unit_number: 0
+          controller_type: sata
+          state: present
+          type: iso
+          iso_path: '[datastore1]/ISO/rhel-9.2-x86_64-dvd.iso'
+          datastore: datastore1
+        networks:
+          - name: VM Network
+            mac: aa:bb:dd:aa:00:14
+            ip: 10.10.10.100
+            netmask: 255.255.255.0
+            device_type: vmxnet3
+        wait_for_ip_address: true
+        wait_for_ip_address_timeout: 600
+    - name: Press tab and paste the kickstart file URL
+      ansible.builtin.raw: |
+        xdotool key Tab
+        echo "{{ kickstart_file_url }}" | xclip -selection clipboard
+        xdotool paste
+        xdotool key Enter
+      delegate_to: localhost
+      register: deploy_vm
+
+
+
