@@ -12,7 +12,7 @@
     kickstart_file_url: "http://192.168.18.43/ks-rhel8.cfg"
     kickstart_file: ks-rhel8.cfg
   tasks:
-  - name: Boot VM with CentOS 7 installation iso in CDROM
+  - name: Boot VM with Rhel 8 installation iso in CDROM
     vmware_guest:
       validate_certs: False
       hostname: '{{ vcenter_hostname }}'
