@@ -1,0 +1,14 @@
+---
+- hosts: 192.168.18.29
+  connection: local
+  gather_facts: no
+  vars:
+    vcenter_hostname: 192.168.18.29
+    vcenter_username: root
+    vcenter_password: redhat@123
+    esxi_hostname: it22.local
+    ansible_python_interpreter: /usr/bin/python3
+    httpd_ip: 192.168.18.43
+    httpd_port: 80
+  roles:
+    - roles/naming_conventions

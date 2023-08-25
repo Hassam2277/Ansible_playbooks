@@ -1,0 +1,33 @@
+############# If you want to create multiple VM with different OS you can uncomment below lines(double commented) till line 20 #############
+##vm_specs:
+##  - hostname: vm1
+##    iso_path: '[datastore1]/ISO/rhel-8.1-x86_64-dvd.iso'
+##    memory_mb: 2048
+##    num_cpus: 2
+##    num_cpu_cores_per_socket: 2
+##    kickstart_file_url: "http://192.168.18.43/ks-rhel8.cfg"
+##    kickstart_file: ks-rhel8.cfg
+##    guest_id: rhel8_64Guest
+##  - hostname: vm2
+##    iso_path: '[datastore1]/ISO/rhel-9.2-x86_64-dvd.iso'
+##    memory_mb: 4096
+##    num_cpus: 3
+##    num_cpu_cores_per_socket: 3
+##    kickstart_file_url: "http://192.168.18.43/ks.cfg"
+##    kickstart_file: ks.cfg
+##    guest_id: rhel8_64Guest
+  # Add more VM specifications as needed
+
+
+
+
+############# Use this if you want to create multiple VMs with same specs and ISO's or define a range  #############
+vm_specs:
+  - hostname: "vm{{ item }}"
+    iso_path: '[datastore1]/ISO/rhel-8.1-x86_64-dvd.iso'
+    memory_mb: 2048
+    num_cpus: 2
+    num_cpu_cores_per_socket: 2
+    kickstart_file_url: "http://192.168.18.43/ks-rhel8.cfg"
+    kickstart_file: ks-rhel8.cfg
+    guest_id: rhel8_64Guest
