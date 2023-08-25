@@ -1,0 +1,70 @@
+---
+- hosts: 192.168.18.29
+  connection: local
+  gather_facts: no
+  vars:
+    vcenter_hostname: 192.168.18.29
+    vcenter_username: root
+    vcenter_password: redhat@123
+    esxi_hostname: it22.local
+    ansible_python_interpreter: /usr/bin/python3
+    httpd_ip: 192.168.18.43
+    httpd_port: 80
+  tasks:
+    - name: Create VMs
+      vmware_guest:
+        validate_certs: False
+        hostname: '{{ vcenter_hostname }}'
+        username: '{{ vcenter_username }}'
+        password: '{{ vcenter_password }}'
+        name: "vm{{ item }}"
+        folder: /
+        state: poweredon
+        disk:
+          - size_gb: 10
+            type: thin
+            datastore: datastore1
+        cdrom:
+          - controller_number: 0
+            unit_number: 0
+            state: present
+            type: iso
+            iso_path: "[datastore1]/ISO/rhel-8.1-x86_64-dvd.iso"
+        hardware:
+          memory_mb: 2048
+          num_cpus: 2
+          num_cpu_cores_per_socket: 2
+        guest_id: rhel8_64Guest
+        networks:
+          - name: "VM Network"
+      loop: "{{ range(1, 4)|list }}"
+
+    - name: Handle boot parameter
+      vmware_guest_sendkey:
+        validate_certs: False
+        hostname: "{{ vcenter_hostname }}"
+        username: "{{ vcenter_username }}"
+        password: "{{ vcenter_password }}"
+        name: "vm{{ item }}"
+        keys_send:
+          - ESC
+          - ESC
+        string_send: 'vmlinuz initrd=initrd.img inst.ks=http://{{ httpd_ip }}:{{ httpd_port }}/ks-rhel8.cfg'
+      delegate_to: localhost
+      loop: "{{ range(1, 4)|list }}"
+      loop_control:
+        loop_var: item
+
+    - name: Start installation after providing boot parameter at installation prompt
+      vmware_guest_sendkey:
+        validate_certs: False
+        hostname: "{{ vcenter_hostname }}"
+        username: "{{ vcenter_username }}"
+        password: "{{ vcenter_password }}"
+        name: "vm{{ item }}"
+        keys_send:
+          - ENTER
+      delegate_to: localhost
+      loop: "{{ range(1, 4)|list }}"
+      loop_control:
+        loop_var: item
