@@ -1,0 +1,76 @@
+---
+- hosts: 192.168.18.29
+  connection: local
+  gather_facts: no
+  vars_files:
+    - vm_specs.yml
+  vars:
+    vcenter_hostname: 192.168.18.29
+    vcenter_username: root
+    vcenter_password: redhat@123
+    esxi_hostname: it22.local
+    ansible_python_interpreter: /usr/bin/python3
+    httpd_ip: 192.168.18.43
+    httpd_port: 80
+  tasks:
+    - name: Boot VM with OS installation iso in CDROM
+      vmware_guest:
+        validate_certs: False
+        hostname: '{{ vcenter_hostname }}'
+        username: '{{ vcenter_username }}'
+        password: '{{ vcenter_password }}'
+        name: "{{ item.hostname }}"  # Use 'item.hostname' to access each VM's hostname
+        folder: /
+        state: poweredon
+
+        disk:
+          - size_gb: 10
+            type: thin
+            datastore: datastore1
+        cdrom:
+          - controller_number: 0
+            unit_number: 0
+            state: present
+            type: iso
+            iso_path: "{{ item.iso_path }}"  # Use 'item.iso_path' to access each VM's iso_path
+        hardware:
+          memory_mb: "{{ item.memory_mb }}"  # Use 'item.memory_mb' to access each VM's memory_mb
+          num_cpus: "{{ item.num_cpus }}"      # Use 'item.num_cpus' to access each VM's num_cpus
+          num_cpu_cores_per_socket: "{{ item.num_cpu_cores_per_socket }}"  # Use 'item.num_cpu_cores_per_socket' to access each VM's num_cpu_cores_per_socket
+
+        guest_id: "{{ item.guest_id }}"   #rhel8_64Guest
+        networks:
+          - name: "VM Network"
+      loop: "{{ vm_specs }}"  # Loop through vm_specs
+      loop_control:
+        loop_var: item  # Define 'item' as the loop variable
+
+    - name: Handle boot parameter
+      vmware_guest_sendkey:
+        validate_certs: False
+        hostname: "{{ vcenter_hostname }}"
+        username: "{{ vcenter_username }}"
+        password: "{{ vcenter_password }}"
+        name: "{{ item.hostname }}"  # Use 'item.hostname' to access each VM's hostname
+        keys_send:
+          - ESC
+          - ESC
+        string_send: 'vmlinuz initrd=initrd.img inst.ks=http://{{ httpd_ip }}:{{ httpd_port }}/{{ item.kickstart_file }}'
+      delegate_to: localhost
+      loop: "{{ vm_specs }}"  # Loop through vm_specs
+      loop_control:
+        loop_var: item  # Define 'item' as the loop variable
+
+    - name: Start installation after providing boot parameter at installation prompt
+      vmware_guest_sendkey:
+        validate_certs: False
+        hostname: "{{ vcenter_hostname }}"
+        username: "{{ vcenter_username }}"
+        password: "{{ vcenter_password }}"
+        name: "{{ item.hostname }}"  # Use 'item.hostname' to access each VM's hostname
+        keys_send:
+          - ENTER
+      delegate_to: localhost
+      loop: "{{ vm_specs }}"  # Loop through vm_specs
+      loop_control:
+        loop_var: item  # Define 'item' as the loop variable
