@@ -1,0 +1,133 @@
+---
+- name: Prompt for the number of master nodes
+  pause:
+    prompt: "Enter the number of master nodes to create (0 if none): "
+  register: master_nodes_count
+  until: master_nodes_count.user_input | int >= 0
+  retries: 3
+- name: Prompt for the number of worker nodes
+  pause:
+    prompt: "Enter the number of worker nodes to create (0 if none): "
+  register: worker_nodes_count
+  until: worker_nodes_count.user_input | int >= 0
+  retries: 3
+- name: Create VMs for master nodes
+  vmware_guest:
+    validate_certs: False
+    hostname: '{{ vcenter_hostname }}'
+    username: '{{ vcenter_username }}'
+    password: '{{ vcenter_password }}'
+    name: "{{ 'master' + (item | string) }}"
+    folder: /
+    state: poweredon
+    disk:
+      - size_gb: 10
+        type: thin
+        datastore: datastore1
+    cdrom:
+      - controller_number: 0
+        unit_number: 0
+        state: present
+        type: iso
+        iso_path: "[datastore1]/ISO/rhel-8.1-x86_64-dvd.iso"
+    hardware:
+      memory_mb: 2048
+      num_cpus: 2
+      num_cpu_cores_per_socket: 2
+    guest_id: rhel8_64Guest
+    networks:
+      - name: "VM Network"
+  loop: "{{ range(1, master_nodes_count.user_input | int + 1) }}"
+  loop_control:
+    loop_var: item
+  when: master_nodes_count.user_input | int > 0
+- name: Handle boot parameter for master nodes
+  vmware_guest_sendkey:
+    validate_certs: False
+    hostname: "{{ vcenter_hostname }}"
+    username: "{{ vcenter_username }}"
+    password: "{{ vcenter_password }}"
+    name: "{{ 'master' + (item | string) }}"
+    keys_send:
+      - ESC
+      - ESC
+    string_send: 'vmlinuz initrd=initrd.img inst.ks=http://{{ httpd_ip }}:{{ httpd_port }}/ks-rhel8.cfg'
+  delegate_to: localhost
+  loop: "{{ range(1, master_nodes_count.user_input | int + 1) }}"
+  loop_control:
+    loop_var: item
+  when: master_nodes_count.user_input | int > 0
+- name: Start installation after providing boot parameter at installation prompt for master nodes
+  vmware_guest_sendkey:
+    validate_certs: False
+    hostname: "{{ vcenter_hostname }}"
+    username: "{{ vcenter_username }}"
+    password: "{{ vcenter_password }}"
+    name: "{{ 'master' + (item | string) }}"
+    keys_send:
+      - ENTER
+  delegate_to: localhost
+  loop: "{{ range(1, master_nodes_count.user_input | int + 1) }}"
+  loop_control:
+    loop_var: item
+  when: master_nodes_count.user_input | int > 0
+- name: Create VMs for worker nodes
+  vmware_guest:
+    validate_certs: False
+    hostname: '{{ vcenter_hostname }}'
+    username: '{{ vcenter_username }}'
+    password: '{{ vcenter_password }}'
+    name: "{{ 'worker' + (item | string) }}"
+    folder: /
+    state: poweredon
+    disk:
+      - size_gb: 10
+        type: thin
+        datastore: datastore1
+    cdrom:
+      - controller_number: 0
+        unit_number: 0
+        state: present
+        type: iso
+        iso_path: "[datastore1]/ISO/rhel-8.1-x86_64-dvd.iso"
+    hardware:
+      memory_mb: 2048
+      num_cpus: 2
+      num_cpu_cores_per_socket: 2
+    guest_id: rhel8_64Guest
+    networks:
+      - name: "VM Network"
+  loop: "{{ range(1, worker_nodes_count.user_input | int + 1) }}"
+  loop_control:
+    loop_var: item
+  when: worker_nodes_count.user_input | int > 0
+- name: Handle boot parameter for worker nodes
+  vmware_guest_sendkey:
+    validate_certs: False
+    hostname: "{{ vcenter_hostname }}"
+    username: "{{ vcenter_username }}"
+    password: "{{ vcenter_password }}"
+    name: "{{ 'worker' + (item | string) }}"
+    keys_send:
+      - ESC
+      - ESC
+    string_send: 'vmlinuz initrd=initrd.img inst.ks=http://{{ httpd_ip }}:{{ httpd_port }}/ks-rhel8.cfg'
+  delegate_to: localhost
+  loop: "{{ range(1, worker_nodes_count.user_input | int + 1) }}"
+  loop_control:
+    loop_var: item
+  when: worker_nodes_count.user_input | int > 0
+- name: Start installation after providing boot parameter at installation prompt for worker nodes
+  vmware_guest_sendkey:
+    validate_certs: False
+    hostname: "{{ vcenter_hostname }}"
+    username: "{{ vcenter_username }}"
+    password: "{{ vcenter_password }}"
+    name: "{{ 'worker' + (item | string) }}"
+    keys_send:
+      - ENTER
+  delegate_to: localhost
+  loop: "{{ range(1, worker_nodes_count.user_input | int + 1) }}"
+  loop_control:
+    loop_var: item
+  when: worker_nodes_count.user_input | int > 0
