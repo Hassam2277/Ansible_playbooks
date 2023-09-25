@@ -55,7 +55,7 @@
         host: smtp.gmail.com  # Update with your SMTP server details
         port: 587
         username: no-reply@it22.nl 
-        password: glzpcmxvdfblrwyi
+        password: 
         to: h.tahir@it22.nl
         subject: Package Update Report
         body: Attached is the CSV file containing the combined package update report.
