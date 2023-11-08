@@ -1,0 +1,31 @@
+---
+- name: SSL Certificate Expiry Check
+  hosts: localhost
+  gather_facts: yes
+
+  tasks:
+    - name: Define list of domains and email parameters
+      set_fact:
+        domains_to_check:
+          - name: www.cncf.io
+            email: h.tahir@it22.nl
+
+    - name: Get a cert from an https port
+      community.crypto.get_certificate:
+        host: "{{ item.name }}"
+        port: 443
+        select_crypto_backend: auto
+      delegate_to: localhost
+      run_once: true
+      register: cert
+      loop: "{{ domains_to_check }}"
+
+    - name: Set environment variables for Python script
+      ansible.builtin.set_fact:
+        python_env_vars:
+          CERT_NOT_AFTER: "{{ cert.results[0].not_after }}"
+          ANSIBLE_DATE_TIME_ISO8601: "{{ ansible_date_time.iso8601 }}"
+          
+    - name: Calculate the remaining days until certificate expiry
+      command: python calculate_remaining_days.py
+      environment: "{{ python_env_vars }}"

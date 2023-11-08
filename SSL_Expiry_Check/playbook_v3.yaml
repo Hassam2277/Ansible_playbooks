@@ -1,0 +1,44 @@
+---
+- name: Get SSL certificate expiry date for {{ item }}
+  shell: "echo | openssl s_client -servername {{ item }} -connect {{ item }}:443 2>/dev/null | openssl x509 -noout -dates | grep notAfter | awk -F'=' '{print $2}'"
+  register: cert_info
+  changed_when: false  # Avoid unnecessary changes
+
+- name: Cert output for {{ item }}
+  debug:
+    msg: "{{ cert_info.stdout }}"
+  when: cert_info.stdout is defined
+
+- name: Calculate days until cert expires for {{ item }}
+  set_fact:
+    expire_days: "{{ (( cert_info.stdout | to_datetime('%b %d %H:%M:%S %Y %Z')) - (ansible_date_time.iso8601 | to_datetime('%Y-%m-%dT%H:%M:%SZ')) ).days }}"
+  when: cert_info.stdout is defined
+
+- name: Save SSL certificate expiry date to a file for {{ item }}
+  copy:
+    content: "The SSL certificate for {{ item }} will expire on {{ cert_info.stdout }}. Certificates will expire in {{ expire_days }} days."
+    dest: "/tmp/ssl_certificate_expiry_{{ item }}.txt"
+
+
+- name: Save total days left to a file for {{ item }}
+  copy:
+    content: "{{ expire_days }}"
+    dest: "/tmp/total_days_left_{{ item }}.txt"
+  when: cert_info.stdout is defined
+
+
+
+- name: Send Email for {{ item }}
+  delegate_to: localhost
+  mail:
+    host: smtp.gmail.com # Update with your SMTP server details
+    port: 587
+    username: no-reply@it22.nl
+    password: glzpcmxvdfblrwyi
+    from: ssl-checker@it22.nl
+    to: h.tahir@it22.nl , a.nadeem@it22.nl, amir.khan@it22.nl
+    subject: SSL Expiry For {{ item }}
+    body: "SSL certificate for domain {{ item }} will expire in {{ expire_days }} days."
+  when: expire_days | int < 30
+
+

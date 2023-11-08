@@ -1,0 +1,33 @@
+---
+- name: Check SSL certificate expiry date and save to a file
+  hosts: localhost
+  gather_facts: no
+  vars:
+    domain: "aap.it22.cloud"  # Replace with your domain
+  tasks:
+    - name: Get SSL certificate expiry date
+      shell: "echo | openssl s_client -servername {{ domain }} -connect {{ domain }}:443 2>/dev/null | openssl x509 -noout -dates | grep notAfter | awk -F'=' '{print $2}'"
+      register: cert_info
+      changed_when: false  # Avoid unnecessary changes
+
+    - name: Extract SSL certificate expiry date
+      set_fact:
+        cert_expiry_str: "{{ cert_info.stdout }}"
+        
+    - name: Save SSL certificate expiry date to a file
+      copy:
+        content: "The SSL certificate for {{ domain }} will expire on {{ cert_expiry_str }}."
+        dest: "/tmp/ssl_certificate_expiry.txt"
+
+    - name: Send Email
+      delegate_to: localhost
+      mail:
+        host: smtp.gmail.com # Update with your SMTP server details
+        port: 587
+        username: no-reply@it22.nl 
+        password: glzpcmxvdfblrwyi 
+        to: h.tahir@it22.nl, a.nadeem@it22.nl
+        subject: SSL Expiry Check
+        body: Please find attached the file showing the SSL expiry date of your domain.
+        attach:
+          - /tmp/ssl_certificate_expiry.txt

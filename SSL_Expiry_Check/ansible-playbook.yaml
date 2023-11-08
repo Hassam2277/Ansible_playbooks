@@ -1,0 +1,14 @@
+---
+- name: Check SSL certificate expiry date and send emails
+  hosts: localhost
+  gather_facts: yes
+  vars:
+    domains:
+      - "aap.it22.cloud"  # Replace with your list of domains
+      - "www.cncf.io"
+      - "it22.nl"
+      - "it22.uk"
+  tasks:
+    - name: Loop through domains and get SSL certificate expiry
+      include_tasks: playbook_v3.yaml #loop_domains.yml
+      with_items: "{{ domains }}"
