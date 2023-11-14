@@ -1,0 +1,9 @@
+# datetime_import.yaml
+
+- name: Import Python datetime module
+  ansible.builtin.raw: echo "from datetime import datetime, timedelta" > /tmp/datetime_import.py
+  run_once: true
+
+- name: Include Python datetime module
+  ansible.builtin.raw: python /tmp/datetime_import.py
+  run_once: true

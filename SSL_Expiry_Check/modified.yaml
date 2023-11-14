@@ -1,0 +1,82 @@
+---
+- name: Get SSL certificate expiry date for {{ item }}
+  shell: "echo | openssl s_client -servername {{ item }} -connect {{ item }}:443 2>/dev/null | openssl x509 -noout -dates | grep notAfter | awk -F'=' '{print $2}'"
+  register: cert_info
+  changed_when: false  # Avoid unnecessary changes
+
+- name: Cert output for {{ item }}
+  debug:
+    msg: "Original expiry date for {{ item }}: {{ cert_info.stdout }}, New date 2 days before: {{ (cert_info.stdout | to_datetime('%b %d %H:%M:%S %Y %Z')).strftime('%-d %b %Y, %H:%M:%S GMT') | default('N/A') }}"
+  when: cert_info.stdout is defined
+
+#Uncomment these 2 tasks and comment below tasks if you want to print complete date with hours and minutes.
+
+#- name: Calculate date 2 days before cert expiry for {{ item }}
+#  command: python -c "from datetime import datetime, timedelta; print((datetime.strptime('{{ cert_info.stdout | regex_replace('GMT', '') }}', '%b %d %H:%M:%S %Y ') - timedelta(days=2)).strftime('%b %d %H:%M:%S %Y GMT'))"
+#  register: new_date
+#  changed_when: false
+#  when: cert_info.stdout is defined
+#
+#- name: Display new date 2 days before cert expiry for {{ item }}
+#  debug:
+#    msg: "New date 2 days before cert expiry for {{ item }}: {{ new_date.stdout }}"
+#  when: cert_info.stdout is defined
+
+
+- name: Calculate date 2 days before cert expiry for {{ item }}
+  command: python -c "from datetime import datetime, timedelta; print((datetime.strptime('{{ cert_info.stdout }}', '%b %d %H:%M:%S %Y %Z') - timedelta(days=2)).strftime('%-d %b %Y, %H:%M:%S GMT'))"
+  register: new_date
+  when: cert_info.stdout is defined
+
+- name: Display new date 2 days before cert expiry for {{ item }}
+  debug:
+    msg: "New date 2 days before cert expiry for {{ item }}: {{ new_date.stdout }}"
+  when: cert_info.stdout is defined
+
+- name: Calculate days until cert expires for {{ item }}
+  set_fact:
+    expire_days: "{{ (( cert_info.stdout | to_datetime('%b %d %H:%M:%S %Y %Z')) - (ansible_date_time.iso8601 | to_datetime('%Y-%m-%dT%H:%M:%SZ')) ).days }}"
+  when: cert_info.stdout is defined
+
+- name: Save SSL certificate expiry date to a file for {{ item }}
+  copy:
+    content: "The SSL certificate for {{ item }} will expire on {{ cert_info.stdout }}. Certificates will expire in {{ expire_days }} days."
+    dest: "/tmp/ssl_certificate_expiry_{{ item }}.txt"
+
+
+- name: Save total days left to a file for {{ item }}
+  copy:
+    content: "{{ expire_days }}"
+    dest: "/tmp/total_days_left_{{ item }}.txt"
+  when: cert_info.stdout is defined
+
+
+
+- name: Send Email for {{ item }}
+  delegate_to: localhost
+  mail:
+    host: smtp.gmail.com # Update with your SMTP server details
+    port: 587
+    username: no-reply@it22.nl
+    password: glzpcmxvdfblrwyi
+    from: ssl-checker@it22.nl
+    to: h.tahir@it22.nl , a.nadeem@it22.nl #, r.abbasi@it22.nl, m.hassan@it22.nl
+    #c: amir.khan@it22.nl
+    subject: SSL Certificate Expiry Notification For {{ item }}
+    body: |
+
+      Respected Team,
+
+      The SSL certificate for the domain "{{ item }}" will expire in the next {{ expire_days }} days on {{ (cert_info.stdout | to_datetime('%b %d %H:%M:%S %Y %Z')).strftime('%-d %b %Y, %H:%M:%S GMT') | default('N/A') }}.
+
+      It is advised to plan the update activity 2 days prior to its expiry on "{{ (cert_info.stdout | to_datetime('%b %d %H:%M:%S %Y %Z')).replace(day=(cert_info.stdout | to_datetime('%b %d %H:%M:%S %Y %Z')).day - 2).strftime('%-d %b %Y') | default('N/A') }}" to avoid any service interruptions.
+
+      The responsible stakeholders are suggested to take immediate solution steps and notify the customer within the defined time period.
+
+      Regards,
+
+      IT22 Notification System
+
+  when: expire_days | int < 60
+
+

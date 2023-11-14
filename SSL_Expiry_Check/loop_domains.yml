@@ -11,25 +11,22 @@
 - name: Calculate days until cert expires for {{ item }}
   debug:
     msg: "Cert for {{ item }} expires in: {{ expire_days }} days."
-  debug:
-    txt: "{{ Testing Message = expire_days }}"
   vars:
     expire_days: "{{ (( cert_info.stdout | to_datetime('%b %d %H:%M:%S %Y %Z')) - (ansible_date_time.iso8601 | to_datetime('%Y-%m-%dT%H:%M:%SZ')) ).days }}"
   register: expire_days_info
-
 - name: Save SSL certificate expiry date to a file for {{ item }}
   copy:
     content: "The SSL certificate for {{ item }} will expire on {{ cert_info.stdout }}. Certificates will expire in {{ expire_days_info.msg }}."
     dest: "/tmp/ssl_certificate_expiry_{{ item }}.txt"
 
-#- name: Send Email for {{ item }}
-#  delegate_to: localhost
-#  mail:
-#    host: smtp.gmail.com # Update with your SMTP server details
-#    port: 587
-#    username: no-reply@it22.nl 
-#    password: glzpcmxvdfblrwyi 
-#    from: ssl-checker@it22.nl
-#    to: h.tahir@it22.nl, a.nadeem@it22.nl
-#    subject: SSL Expiry For {{ item }}
-#    body: "SSL certificate for domain {{ item }} will expire in {{ expire_days_info.msg }} days."
+- name: Send Email for {{ item }}
+  delegate_to: localhost
+  mail:
+    host: smtp.gmail.com # Update with your SMTP server details
+    port: 587
+    username: no-reply@it22.nl 
+    password: glzpcmxvdfblrwyi 
+    from: ssl-checker@it22.nl
+    to: h.tahir@it22.nl, a.nadeem@it22.nl
+    subject: SSL Expiry For {{ item }}
+    body: "SSL certificate for domain {{ item }} will expire in {{ expire_days_info.msg }} days."
