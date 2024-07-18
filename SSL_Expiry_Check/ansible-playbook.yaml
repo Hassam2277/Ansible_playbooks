@@ -4,13 +4,116 @@
   gather_facts: yes
   vars:
     domains:
-      - { domain: "aap.it22.cloud", port: 443 }
-      - { domain: "console-openshift-console.apps.alpha.it22.cloud", port: 443 }
-      - { domain: "it22.nl", port: 443 }
-      - { domain: "it22.uk", port: 443 }
-      - { domain: "www.it22.nl", port: 443 }
-      - { domain: "www.it22.uk", port: 443 }
-      - { domain: "rhdsaa.it22.cloud", port: 9090 }
+      - domain: "aap.it22.cloud"
+        port: 443
+        recipients: "h.tahir@it22.nl, zaheer.ahmed@it22.nl"
+        ccrecipients: "h.tahir@it22.nl, zaheer.ahmed@it22.nl" 
+        
+      - domain: "console-openshift-console.apps.alpha.it22.cloud"
+        port: 443
+        recipients: "h.tahir@it22.nl, m.hassan@it22.nl, zaheer.ahmed@it22.nl"
+        ccrecipients: "h.tahir@it22.nl, zaheer.ahmed@it22.nl" 
+        
+      - domain: "it22.nl"
+        port: 443
+        recipients: "h.tahir@it22.nl, zaheer.ahmed@it22.nl"
+        ccrecipients: "h.tahir@it22.nl, zaheer.ahmed@it22.nl" 
+        
+      - domain: "it22.uk"
+        port: 443
+        recipients: "h.tahir@it22.nl, zaheer.ahmed@it22.nl"
+        ccrecipients: "h.tahir@it22.nl, zaheer.ahmed@it22.nl" 
+        
+      - domain: "www.it22.nl"
+        port: 443
+        recipients: "h.tahir@it22.nl, zaheer.ahmed@it22.nl"
+        ccrecipients: "h.tahir@it22.nl, zaheer.ahmed@it22.nl" 
+        
+      - domain: "www.it22.uk"
+        port: 443
+        recipients: "h.tahir@it22.nl, zaheer.ahmed@it22.nl"
+        ccrecipients: "h.tahir@it22.nl, zaheer.ahmed@it22.nl" 
+        
+      - domain: "rhdsaa.it22.cloud"
+        port: 9090
+        recipients: "h.tahir@it22.nl, zaheer.ahmed@it22.nl"
+        ccrecipients: "h.tahir@it22.nl, zaheer.ahmed@it22.nl" 
+        
+      - domain: "api.fortesdata.com" 
+        port: 443
+        recipients: "h.tahir@it22.nl, zaheer.ahmed@it22.nl"
+        ccrecipients: "h.tahir@it22.nl, zaheer.ahmed@it22.nl" 
+        
+      - domain: "3scale-admin.api.fortes-es.nl" 
+        port: 443
+        recipients: "h.tahir@it22.nl, zaheer.ahmed@it22.nl, r.abbasi@it22.nl"
+        ccrecipients: "h.tahir@it22.nl, zaheer.ahmed@it22.nl" 
+        
+      - domain: "api.it22.nl" 
+        port: 443
+        recipients: "h.tahir@it22.nl, zaheer.ahmed@it22.nl"
+        ccrecipients: "h.tahir@it22.nl, zaheer.ahmed@it22.nl" 
+        
+      - domain: "3scale-admin.api.it22.nl" 
+        port: 443
+        recipients: "h.tahir@it22.nl, zaheer.ahmed@it22.nl, r.abbasi@it22.nl"
+        ccrecipients: "h.tahir@it22.nl, zaheer.ahmed@it22.nl" 
+        
+      - domain: "mijnenergiestand.nl" 
+        port: 443
+        recipients: "h.tahir@it22.nl, zaheer.ahmed@it22.nl"
+        ccrecipients: "h.tahir@it22.nl, zaheer.ahmed@it22.nl" 
+        
+      - domain: "service.fortes-es.nl" 
+        port: 443
+        recipients: "h.tahir@it22.nl, zaheer.ahmed@it22.nl"
+        ccrecipients: "h.tahir@it22.nl, zaheer.ahmed@it22.nl" 
+        
+      - domain: "portal.it22.nl" 
+        port: 443
+        recipients: " h.tahir@it22.nl, zaheer.ahmed@it22.nl"
+        ccrecipients: "h.tahir@it22.nl, zaheer.ahmed@it22.nl" 
+        
+      - domain: "apps.it22.nl" 
+        port: 443
+        recipients: "h.tahir@it22.nl, zaheer.ahmed@it22.nl"
+        ccrecipients: "h.tahir@it22.nl, zaheer.ahmed@it22.nl" 
+        
+      - domain: "sq.tools.it22.cloud" 
+        port: 443
+        recipients: "h.tahir@it22.nl, zaheer.ahmed@it22.nl"
+        ccrecipients: "h.tahir@it22.nl, zaheer.ahmed@it22.nl" 
+        
+      - domain: "web.tda.it22.cloud" 
+        port: 443
+        recipients: "h.tahir@it22.nl, zaheer.ahmed@it22.nl"
+        ccrecipients: "h.tahir@it22.nl, zaheer.ahmed@it22.nl" 
+        
+      - domain: "admin.tda.it22.cloud" 
+        port: 443
+        recipients: "h.tahir@it22.nl, zaheer.ahmed@it22.nl"
+        ccrecipients: "h.tahir@it22.nl, zaheer.ahmed@it22.nl" 
+        
+      - domain: "admin.vlogmakelaars.nl" 
+        port: 443
+        recipients: "h.tahir@it22.nl, zaheer.ahmed@it22.nl"
+        ccrecipients: "h.tahir@it22.nl, zaheer.ahmed@it22.nl" 
+        
+      - domain: "client.vlogmakelaars.nl" 
+        port: 443
+        recipients: "h.tahir@it22.nl, zaheer.ahmed@it22.nl"
+        ccrecipients: "h.tahir@it22.nl, zaheer.ahmed@it22.nl" 
+        
+      - domain: "vlogmakelaars.nl" 
+        port: 443
+        recipients: "h.tahir@it22.nl, zaheer.ahmed@it22.nl"
+        ccrecipients: "h.tahir@it22.nl, zaheer.ahmed@it22.nl" 
+        
+      - domain: "portal.it22.nl" 
+        port: 443
+        recipients: "  h.tahir@it22.nl, zaheer.ahmed@it22.nl"
+        ccrecipients: "h.tahir@it22.nl, zaheer.ahmed@it22.nl" 
+
   tasks:
     - name: Import Python datetime module
       ansible.builtin.shell: echo "from datetime import datetime, timedelta" > /tmp/datetime_import.py
@@ -22,5 +125,5 @@
       ansible.builtin.shell: python /tmp/datetime_import.py
       run_once: true
     - name: Loop through domains and get SSL certificate expiry
-      include_tasks: playbook_v5.yaml 
+      include_tasks: playbook_v6.yaml 
       with_items: "{{ domains }}"

@@ -4,12 +4,13 @@
   gather_facts: yes
   vars:
     domains:
-      - "aap.it22.cloud"  # Replace with your list of domains
-      - "console-openshift-console.apps.alpha.it22.cloud"
-      - "it22.nl"
-      - "it22.uk"
-      - "www.it22.nl"
-      - "www.it22.uk"
+      - { domain: "aap.it22.cloud", port: 443 }
+      - { domain: "console-openshift-console.apps.alpha.it22.cloud", port: 443 }
+      - { domain: "it22.nl", port: 443 }
+      - { domain: "it22.uk", port: 443 }
+      - { domain: "www.it22.nl", port: 443 }
+      - { domain: "www.it22.uk", port: 443 }
+      - { domain: "rhdsaa.it22.cloud", port: 9090 }
   tasks:
     - name: Import Python datetime module
       ansible.builtin.shell: echo "from datetime import datetime, timedelta" > /tmp/datetime_import.py
@@ -21,5 +22,5 @@
       ansible.builtin.shell: python /tmp/datetime_import.py
       run_once: true
     - name: Loop through domains and get SSL certificate expiry
-      include_tasks: modified.yaml 
+      include_tasks: playbook_v5.yaml 
       with_items: "{{ domains }}"
