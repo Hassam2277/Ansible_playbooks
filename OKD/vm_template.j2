@@ -1,0 +1,63 @@
+apiVersion: kubevirt.io/v1
+kind: VirtualMachine
+metadata:
+  name: {{ name }}
+  namespace: {{ namespace }}
+spec:
+  dataVolumeTemplates:
+    - apiVersion: 'cdi.kubevirt.io/v1beta1'
+      kind: 'DataVolume'
+      metadata:
+        name: {{ name }}
+      spec:
+        source:
+          http:
+            url: {{ url }}
+        storage:
+          resources:
+            requests:
+              storage: {{ boot_image_size }}
+  running: true
+  template:
+    metadata:
+      labels:
+        kubevirt.io/domain: {{ name }}
+    spec:
+      domain:
+        cpu:
+          cores: {{ vm_cpus_cores }}
+          sockets: {{ vm_cpus_sockets }}
+          threads: {{ vm_cpus_threads }}
+        devices:
+          disks:
+            - disk:
+                bus: 'virtio'
+              name: 'rootdisk'
+            - disk:
+                bus: 'virtio'
+              name: 'cloudinitdisk'
+          interfaces:
+            - macAddress: {{ macAddress }}
+              masquerade: {}
+              model: 'virtio'
+              name: 'default'
+          networkInterfaceMultiqueue: true
+          rng: {}
+        machine:
+          type: {{ vm_machine_type }}
+        resources:
+          requests:
+            memory: {{ vm_memory_requests }}
+      evictionStrategy: LiveMigrate
+      networks:
+        - name: default
+          pod: {}
+      terminationGracePeriodSeconds: 180
+      volumes:
+        - dataVolume:
+            name: {{ name }}
+          name: 'rootdisk'
+        - cloudInitNoCloud:
+            secretRef:
+              name: {{ cloud_init_secret }}
+          name: cloudinitdisk

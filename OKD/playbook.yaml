@@ -1,0 +1,98 @@
+---
+- name: Create VM on OpenShift
+  hosts: localhost
+  gather_facts: no
+  vars:
+    oc_server: "https://api.sun.it22.cloud:6443"
+    oc_sa_token: "eyJhbGciOiJSUzI1NiIsImtpZCI6IkVKNEdvQlQ2U0QtNFEtN1Q0eXVxSnctWXdnN28tV2VUMUxLNURub1liMmcifQ.eyJhdWQiOlsiaHR0cHM6Ly9rdWJlcm5ldGVzLmRlZmF1bHQuc3ZjIl0sImV4cCI6MTc1MzI2MTIzOSwiaWF0IjoxNzIxNzI1MjM5LCJpc3MiOiJodHRwczovL2t1YmVybmV0ZXMuZGVmYXVsdC5zdmMiLCJrdWJlcm5ldGVzLmlvIjp7Im5hbWVzcGFjZSI6ImFuc2libGUtdmlydHVhbGl6YXRpb24iLCJzZXJ2aWNlYWNjb3VudCI6eyJuYW1lIjoiYW5zaWJsZS1zYSIsInVpZCI6ImIxNTJlMGQxLWNiYmUtNDQ1NC1hMzIxLTY0ZTUxYjQ2MDIzZCJ9fSwibmJmIjoxNzIxNzI1MjM5LCJzdWIiOiJzeXN0ZW06c2VydmljZWFjY291bnQ6YW5zaWJsZS12aXJ0dWFsaXphdGlvbjphbnNpYmxlLXNhIn0.jndgjKdKMlRPjcZ3LhdHuNYdnlcSM81A9Mgp_JtF02akT63BGR34Vpve_eraRwEQrzrRYkcyJuxbj6sgbTWlbt0Sn7NwEZyLnMXrXqYYDJzscaFuMc1gQrHtoLEoh2BOG3GN39UYmkcHx6lj-RaTgallA1QTJ172oCU-z5APoVDz90GbiWaz1Bd69vOAx7_i1ZKCBPE4jJxqlKURGEyAw4uNlPLmWeJMiUnF9qOKEV_Kr2sFgaanl9_1y2vqfmCWB9GRMgoNVEzu-qYEze_dTyGMF6M4gzZglXGNhLr5D3hae0B1yIEksAW2q7sCNh_HAfRZOmp-nqOO8Pg2Hjy0eWRl6phN6XxI3tsJVLo4lkNr5jV3XuxrerRRQBXbI40_FJ7ZBULhaMOQ5gfJfshxwDddWlOntAIWf8jNtMHyBq-xaPuFYK7gpSimVCMu5gVzVJ_y_MMx64_yNn-rWjW7yQg7kuES6qXfpfjtHEwWh5rkCJa5LCL4ste80m4aSdJnDRSW2oozTI9uSNesFjUlosvqEdGCA3UJ0rp1TE5MaKTcyiGbjCcYZwDzwsbrvSmgPpE7lxuPIZiq7Hqmcwj1F_EuJAx4IggmrO7-J8Zq_penzxBun-0V8TBeQ80rPtmMSuy0G23f_1R3oup8jhqUDkhnMX4uIxQzlB8t7ifrym8"
+    namespace: "ansible-virtualization"
+    name: "rhel-os"
+    pvc_name: "rhel-os-pvc"
+    storage_size: "20Gi"
+    memory_request: "3Gi"
+    vm_image: "https://access.cdn.redhat.com/content/origin/files/sha256/d3/d362e72518a2d7415d850b8177c814f6fd87f42ca1640bda17e98855e1d6baad/rhel-9.4-x86_64-kvm.qcow2?user=0932b63f6acd95884a510fde1143da0c&_auth_=1721917682_7f34573728562b5b46421a13e1d6604d"
+    vm_password: "centos"
+    vm_cpus_cores: 2
+    vm_cpus_sockets: 1
+    vm_cpus_threads: 1
+    vm_machine_type: "pc-q35-rhel9.2.0"
+    vm_memory_requests: "4Gi"
+    boot_image_size: "20Gi"
+    cloud_init_secret: "cloud-init-secret"
+    url: "https://access.cdn.redhat.com/content/origin/files/sha256/d3/d362e72518a2d7415d850b8177c814f6fd87f42ca1640bda17e98855e1d6baad/rhel-9.4-x86_64-kvm.qcow2?user=0932b63f6acd95884a510fde1143da0c&_auth_=1721917682_7f34573728562b5b46421a13e1d6604d"
+    macAddress: "02:00:00:00:00:11"
+    
+  tasks:
+    - name: Log in to OpenShift using Service Account Token
+      shell: "oc login --server={{ oc_server }} --token={{ oc_sa_token }}"
+      register: login_output
+      changed_when: false
+
+    - name: Create a namespace if it doesn't exist
+      k8s:
+        state: present
+        definition:
+          apiVersion: v1
+          kind: Namespace
+          metadata:
+            name: "{{ namespace }}"
+
+    - name: Set cloud-init fact
+      ansible.builtin.set_fact:
+        deploy_collection_cloud_init_content: |
+          #cloud-config
+          user: it22-user
+          password: admin
+          chpasswd:
+            expire: true
+
+    - name: Create cloud-init Secret
+      kubernetes.core.k8s:
+        state: present
+        definition:
+          apiVersion: v1
+          kind: Secret
+          type: Generic
+          metadata:
+            name: "{{ cloud_init_secret }}"
+            namespace: "{{ namespace }}"
+          data:
+            userdata: "{{ deploy_collection_cloud_init_content | b64encode }}"
+
+
+
+    - name: Create a DataVolume (for VM image)
+      k8s:
+        state: present
+        definition:
+          apiVersion: cdi.kubevirt.io/v1beta1
+          kind: DataVolume
+          metadata:
+            name: "{{ pvc_name }}"
+            namespace: "{{ namespace }}"
+          spec:
+            source:
+              http:
+                url: "{{ vm_image }}"
+            pvc:
+              accessModes:
+                - ReadWriteOnce
+              resources:
+                requests:
+                  storage: "{{ storage_size }}"
+
+    - name: Create a VM instance
+      k8s:
+        state: present
+        definition: "{{ lookup('template', 'vm_template.j2') }}"
+
+    #- name: Wait for VM IP to be populated
+    #  kubernetes.core.k8s_info:
+    #    api_version: kubevirt.io/v1
+    #    kind: VirtualMachineInstance
+    #    name: "{{ name }}"
+    #    namespace: "{{ namespace }}"
+    #  register: deploy_collection_vmi
+    #  retries: 60
+    #  delay: 10
+    #  until: (deploy_collection_vmi.resources[0].status.interfaces[0]['ipAddress'] | default('')) | length > 0
